@@ -1,1 +1,1 @@
-{\displaystyle (P\lor (Q\lor R))\Leftrightarrow ((P\lor Q)\lor R)}
+$$A\bigwedge_{}^{}(B\bigwedge_{}^{}C)=(A\bigwedge_{}^{}B)\bigwedge_{}^{}C$$
