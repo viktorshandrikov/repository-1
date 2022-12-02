@@ -13,11 +13,12 @@ $$W=\int_{x_1}^{x_2}|\psi(x)|^{2}dx$$
 <iframe width="768" height="432" src="https://miro.com/app/live-embed/uXjVPCLoPy4=/?moveToViewport=-2987,-727,4426,2233&embedId=951954467363" frameborder="0" scrolling="no" allowfullscreen></iframe>
 https://miro.com/app/board/uXjVPCLoPy4=/
 
-```mermaid
-flowchart LR
+'''flowchart LR
 
-A[торг] -->D[депрессия] B(принятие)
-B --> C{т.н. ЕГЭ}
-C -->|НЕ СДАН| D[Небытие]
-C -->|СДАН| E[ВУЗ]
-```
+A[Поступил] -->|Text| B(Триган)
+B --> Решил?
+Решил? --> B
+B --> C{Сдай ЕГЭ}
+C -->|Сдал| D[Ядерщик]
+C -->|Не сдал| E[СДАЙ ЕГЭ]
+E -->|Сдал| D'''
