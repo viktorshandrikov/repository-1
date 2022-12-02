@@ -18,7 +18,6 @@ https://miro.com/app/board/uXjVPCLoPy4=/
 
 '''
 flowchart LR
-
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
