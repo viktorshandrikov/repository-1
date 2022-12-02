@@ -13,11 +13,9 @@ $$W=\int_{x_1}^{x_2}|\psi(x)|^{2}dx$$
 <iframe width="768" height="432" src="https://miro.com/app/live-embed/uXjVPCLoPy4=/?moveToViewport=-2987,-727,4426,2233&embedId=951954467363" frameborder="0" scrolling="no" allowfullscreen></iframe>
 https://miro.com/app/board/uXjVPCLoPy4=/
 
-
-
-
 ```mermaid
 flowchart LR
+
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
