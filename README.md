@@ -17,7 +17,7 @@ https://miro.com/app/board/uXjVPCLoPy4=/
 flowchart LR
 
 A[Hard] -->|Text| B(Round)
-B --> C{Decision}
+B --> C{т.н. ЕГЭ}
 C -->|НЕ СДАН| D[Небытие]
 C -->|СДАН| E[ВУЗ]
 ```
