@@ -16,7 +16,7 @@ https://miro.com/app/board/uXjVPCLoPy4=/
 ```mermaid
 flowchart LR
 
-A[торг] -->|депрессия| B(принятие)
+A[торг] -->D[депрессия] B(принятие)
 B --> C{т.н. ЕГЭ}
 C -->|НЕ СДАН| D[Небытие]
 C -->|СДАН| E[ВУЗ]
