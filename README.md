@@ -16,7 +16,7 @@ https://miro.com/app/board/uXjVPCLoPy4=/
 
 
 
-'''[mermaid.gythub](https://github.com/mermaid-js/mermaid)
+'''mermaid.gythub
 flowchart LR
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
