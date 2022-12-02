@@ -16,7 +16,7 @@ https://miro.com/app/board/uXjVPCLoPy4=/
 
 
 
-'''mermaid gythub
+'''mermaid
 flowchart LR
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
