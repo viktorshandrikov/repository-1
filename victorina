@@ -10,7 +10,8 @@ def f():
             N=N+1 
     print('Верных ответов:',N)
     print('Cыграть ещё раз?')
-    b=str(input()
-    if b=='Да':
 f()
+b=str(input())
+if b=='Да':
+    f()
 
