@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "language_info": {
+      "codemirror_mode": {
+        "name": "python",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.8"
+    },
+    "kernelspec": {
+      "name": "python",
+      "display_name": "Python (Pyodide)",
+      "language": "python"
+    }
+  },
+  "nbformat_minor": 4,
+  "nbformat": 4,
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": "b='0000000 0001111 0010110 0011001 0100101 0101010 0110011 0111100 1000011 1001100'\nhem=b.split()",
+      "metadata": {
+        "trusted": true
+      },
+      "execution_count": 31,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": "code = \"0101010\"",
+      "metadata": {
+        "trusted": true
+      },
+      "execution_count": 32,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": "def Distance(first_code, second_code):\n    dinstance = 7\n    for i in range(len(first_code)):\n        if first_code[i] == second_code[i]: dinstance -= 1\n    return dinstance",
+      "metadata": {
+        "trusted": true
+      },
+      "execution_count": 33,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": "print(code)\nmin_ = Distance(code, hem[0])\ni_min = 0\nfor i in range(1, 10):\n    d = Distance(code, hem[i])\n    if min_ > d: \n        min_ = d\n        i_min = i\nif min_ == 0: print(\"Код верный\")\nelif min_ == 1: print(f\"Код исправлен: {hem[i]} = {i_min}\")\nelse: print(\"CODE IS que\")",
+      "metadata": {
+        "trusted": true
+      },
+      "execution_count": 35,
+      "outputs": [
+        {
+          "name": "stdout",
+          "text": "0101010\n0000000\n0001111\n0010110\n0011001\n0100101\n0101010\n0110011\n0111100\n1000011\n1001100\nКод верный\n",
+          "output_type": "stream"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": "",
+      "metadata": {},
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
