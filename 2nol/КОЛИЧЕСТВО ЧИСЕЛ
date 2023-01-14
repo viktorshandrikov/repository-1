@@ -1,0 +1,26 @@
+#count=0
+#for a in range (4):
+    #for b in range (4):
+     #   for c in range (4):
+      #              s=str(a)+str(b)+str(c)
+       #             print(s)
+        #            count=count+1
+#print(count)
+
+
+
+
+
+
+
+#from itertools import product
+#for a,b,c in product(range(4),range(4),range(4)):
+#    print(str(a)+str(b)+str(c))
+from itertools import product
+nums=product('0123',repeat=4)
+k=0
+for n in nums:
+    numb=''.join(n)
+    sp=[]
+    k=k+1
+print(k)   
