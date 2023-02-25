@@ -1,0 +1,15 @@
+with open('27-A.txt') as a:
+    a=[int(x) for x in b]
+    a=a.pop(0)
+    l=len(a)
+    cost=0
+    for x in range(1):
+        d=a[x:(x+1)]
+        for N in range(len(a)):
+            ind=0
+            if len(a)//2<=N:
+                ind=len(a)-N
+                cost+=ind*a[N]
+            else:
+                cost+=N*a[N]
+        print(cost)
