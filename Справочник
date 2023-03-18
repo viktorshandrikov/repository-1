@@ -1,0 +1,43 @@
+# 1
+# 2
+# 3
+# 4
+# 5
+# 6
+# 7
+# 8      with open('8.txt') as f:
+            n=[x for x in f]
+            n=f.readline
+            a=abs(-1)
+            max(2,3,10)
+            min(2,3,10)
+            a+=1
+            S=S.replace('A','O')
+            num[2:6]
+            num[::-1]
+            num[:3]
+# 9
+# 10
+# 11
+# 12     if all(s):
+         if all(
+# 13
+# 14
+# 15
+# 16     def f(n):
+           return n*f(n-1)     
+         f(s)
+         sys.set recursionlimit(2500)       
+# 17
+# 18
+# 19
+# 20
+# 21
+# 22
+# 23
+# 24
+# 25     s=sorted(s, reverse=True)
+         s.sort(reverse=True)
+
+# 26
+# 27
