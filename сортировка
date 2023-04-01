@@ -1,0 +1,10 @@
+a=[5,4,6,341,34]
+b=1
+while b==1:
+    for j in range(len(a)-1):#перестановки#
+        if a[j]>a[j+1]:
+            a[j],a[j+1]=a[j+1],a[j]
+    if all(a[j]<=a[j+1] for j in range(len(a)-1)):#условия проверки#
+        b=2
+print(a)
+    
