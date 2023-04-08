@@ -1,0 +1,12 @@
+М=['*   *','** **','* * *','*   *','*   *']
+И=['*   *','*  **','* * *','**  *','*   *']
+q='МИ'
+mat=[И,М]
+М=[' ']
+алф=['И','М']
+алф=list('ИМ')
+ch=[алф.index(z) for z in q] 
+for i in range(len(mat[0])):
+    for y in range(len(ch)):
+        print(mat[ch[y]][i], end=' ')
+    print()
