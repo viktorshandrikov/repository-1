@@ -1,0 +1,41 @@
+// библиотека для работы I²C
+#include <Wire.h>
+// библиотеку для модуля VL6180X
+#include <SparkFun_VL6180X.h>
+// адрес датчика приближения по умолчанию
+#define VL6180X_ADDRESS 0x29
+// создаём объект для работы с модулем
+VL6180x sensor(VL6180X_ADDRESS);
+ 
+void setup()
+{
+  // открываем монитор Serial-порта
+  Serial.begin(9600);
+  // инициализация I2C
+  Wire.begin();
+  // небольшая задержка
+  delay(100);
+ 
+  // проверяем инициализацию модуля
+  while (sensor.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  // загружаем настройки модуля по умолочнию
+  sensor.VL6180xDefautSettings();
+  // ждём 1 секунду
+  delay(1000);
+}
+ 
+void loop()
+{
+  // получаем и выводим значения расстояния до объекта
+  // и уровень внешнего освещения
+  Serial.print("Light = ");
+  //Serial.print(sensor.getAmbientLight(GAIN_1));
+  //Serial.print(" Lx\t\t");
+  Serial.print("Distance = ");
+  Serial.print(sensor.getDistance() );
+  Serial.println(" mm");
+  delay(100);
+}
