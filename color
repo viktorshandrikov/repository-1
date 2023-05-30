@@ -1,0 +1,39 @@
+// Библиотека для работы с датчиком цвета
+#include "Adafruit_TCS34725.h"
+ 
+// Создаём объект для работы с датчиком
+Adafruit_TCS34725 colorSensor;
+ 
+// Назначаем пин для управления подсветкой
+constexpr uint8_t PIN_BACKLIGHT = 7;
+ 
+void setup() {
+  // Открываем Serial-порт
+  Serial.begin(9600);
+  // PIN_BACKLIGHT в режим выхода
+  pinMode(PIN_BACKLIGHT, OUTPUT);
+  // Включаем подсветку
+  digitalWrite(PIN_BACKLIGHT, HIGH);
+  // Инициализация сенсора цвета
+  if (colorSensor.begin()) {
+    Serial.println("Found sensor");
+  } else {
+    Serial.println("No TCS34725 found...");
+    while (1);
+  }
+}
+ 
+void loop() {
+  // Переменные для хранения цветов R, G и B
+  float r, g, b;
+  // Считываем цвета с датчика цвета
+  colorSensor.getRGB(&r, &g, &b);
+  // Вычисляем какой цвет преобладает в зоне видимости датчика
+  if ((abs(r-g)<20) && (r > b))
+    Serial.println("YELLOW");
+  else if ((g > r) && (g > b))
+    Serial.println("GREEN");
+  else if ((b > g) && (b > r))
+    Serial.println("BLUE");
+  delay(100);
+}
