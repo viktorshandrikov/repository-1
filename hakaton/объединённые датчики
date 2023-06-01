@@ -1,0 +1,183 @@
+// Библиотека для работы с датчиком цвета
+#include "Adafruit_TCS34725.h"
+#include <Wire.h>
+#include <SparkFun_VL6180X.h>
+//определение датчика цвета
+#define VL6180X_ADDRESS 0x29
+
+// Назначаем пин для управления подсветкой
+constexpr uint8_t PIN_BACKLIGHT = 2;
+char block= 0;
+
+// Создаём объект для работы с датчиком
+// определение датчика цвета и 3 датчиков расстояния
+Adafruit_TCS34725 colorSensor;
+VL6180x Range1(VL6180X_ADDRESS);
+VL6180x Range2(VL6180X_ADDRESS);
+VL6180x Range3(VL6180X_ADDRESS);
+
+// функция определения цвета или типа мусора
+char Fcolor( ){
+// Включаем подсветку
+  digitalWrite(PIN_BACKLIGHT, HIGH);
+  delay(100);
+  // Переменные для хранения цветов R, G и B
+  digitalWrite(3, HIGH);
+  digitalWrite(4, LOW);
+  float r, g, b;
+  char type;
+
+  // Считываем цвета с датчика цвета
+  colorSensor.getRGB(&r, &g, &b);
+  // Вычисляем какой цвет преобладает в зоне видимости датчика
+  if ((abs(r-g)<40) && (r > b)) {
+    type=2;
+  }
+  //жёлтый=жесть=2
+
+  else if ((g > r) && (g > b)) {
+    type=0;
+  }
+  //зелёный=стекло=0
+
+  else if ((b > g) && (b > r)) {
+    type=1;
+  }
+  //синий=бумага=1
+  digitalWrite(PIN_BACKLIGHT, LOW);
+  delay(100);
+  return type;
+  
+}
+// функция определения расстояния
+int Fdistance(int select){
+
+  // настройка адресов датчиков расстояния
+  int dist;
+  switch (select) {
+    case 1: // стекло
+      digitalWrite(3, 0);
+      digitalWrite(4, 0);
+      dist = Range1.getDistance();
+      if(dist < 20) {
+        block |= 0x1;
+      }
+      else {
+        block &= 0xE;
+      }
+      break;
+    case 2: // бумага
+      digitalWrite(3, 1);
+      digitalWrite(4, 1);
+      dist = Range2.getDistance();
+      if(dist < 20) {
+        block |= 0x2;
+      }
+      else {
+        block &= 0xD;
+      }
+      break;
+    case 3: // жесть
+      digitalWrite(3, 0);
+      digitalWrite(4, 1);
+      dist = Range3.getDistance();
+      if(dist < 20) {
+        block |= 0x4;
+      }
+      else {
+        block &= 0xB;
+      }
+      break;
+  }
+  delay(100);
+  return dist;
+}
+int Ffull(int dist){//функция, считающая заполненность в процентах
+  int full;
+  full=100-(((dist-20)*100)/235);
+  return full;
+}
+
+
+void setup() {
+
+  // Открываем Serial-порт
+  Serial.begin(9600);
+
+  // Настройка пинов	
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(2, OUTPUT);
+  digitalWrite(3, 0);
+  digitalWrite(4, 0);
+  VL6180x Range1(VL6180X_ADDRESS);
+  digitalWrite(3, 1);
+  digitalWrite(4, 1);
+  VL6180x Range2(VL6180X_ADDRESS);
+  digitalWrite(3, 0);
+  digitalWrite(4, 1);
+  VL6180x Range3(VL6180X_ADDRESS);
+  // инициализация I2C
+  Wire.begin();
+
+  
+
+  // небольшая задержка
+  delay(100);
+
+  digitalWrite(3, 0);
+  digitalWrite(4, 0);
+  // проверяем инициализацию модуля
+  while (Range1.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  Range1.VL6180xDefautSettings();
+  delay(1000);
+
+  digitalWrite(3, 1);
+  // Инициализация сенсора цвета
+  while (!colorSensor.begin()) {
+    Serial.println("Failed to initalize color");
+    delay(1000);
+  }
+  delay(1000);
+  //инициализация датчика расстояния
+  digitalWrite(3,0);
+  digitalWrite(4,1);
+  while (Range3.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  Range3.VL6180xDefautSettings();
+  delay(1000);
+
+  digitalWrite(3,1);
+  while (Range2.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  Range2.VL6180xDefautSettings();  
+  delay(1000);
+
+}
+
+
+void loop() {
+  // вывод типа мусора и заполненности баков  
+  Serial.println((int)Fcolor());
+  delay(500);
+  Serial.print("Distance = ");
+  Serial.print(Fdistance(1));
+  Serial.println(" mm");
+  delay(500);  
+  Serial.print("Distance = ");
+  Serial.print(Fdistance(2));
+  Serial.println(" mm");
+  delay(500);
+  Serial.print("Distance = ");
+  Serial.print(Fdistance(3));
+  Serial.println(" mm");
+  delay(500);
+  Serial.println((int)block);
+}
