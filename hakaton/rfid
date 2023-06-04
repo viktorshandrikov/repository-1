@@ -1,0 +1,126 @@
+#include <Wire.h>
+#include <SPI.h>
+// библиотека для работы с RFID/NFC
+#include <Adafruit_PN532.h>
+
+
+// количество по категориям
+const int users = 3;
+const int admins = 1;
+const int workers = 1;
+
+// 3 массива с категориями и uid карточек
+uint8_t adminUids[admins][7] = {{0x04, 0x13, 0xBE, 0xF2, 0xFB, 0x60, 0x81}};
+uint8_t workerUids[workers][7] = {{0x04, 0xF6, 0x3A, 0xF2, 0xFB, 0x60, 0x80}};
+uint8_t userUids[users][4] = {{0xD4, 0xF2, 0x2F, 0x38}, {0xB9, 0x51, 0x89, 0x99}, {0x6A, 0xE1, 0xA4, 0xD5}};
+
+int userId(uint8_t uidRead[], uint8_t uidComp[users][4], uint8_t uidLen) {
+  int none = 0;
+  int index = 0;
+  
+  // проход по отдельным блокам uid и сравнение с существующими
+  bool flag = true;
+  for (index = 0; index < users; index++){
+    for (int i = 0; i < 4; i++){
+      if (uidRead[i] != uidComp[index][i]){
+        flag = false;
+      }
+    }
+    if(flag){
+      return index + 1;
+    }
+    flag = true;
+  }
+  return 0;
+}
+
+int workerId(uint8_t uidRead[], uint8_t uidComp[workers][7], uint8_t uidLen) {
+  int index = 0;
+  bool flag = true;
+  // проход по отдельным блокам uid и сравнение с существующими
+  for (index = 0; index < workers; index++){
+    for (int i = 0; i < 4; i++){
+      if (uidRead[i] != uidComp[index][i]){
+        flag = false;
+      }
+    }
+    if(flag){
+      return index + 1;
+    }
+    flag = true;
+  }
+  return 0;
+}
+
+int adminId(uint8_t uidRead[], uint8_t uidComp[admins][7], uint8_t uidLen) {
+  int index = 0;
+  bool flag = true;
+  // проход по отдельным блокам uid и сравнение с существующими
+  for (index = 0; index < admins; index++){
+    for (int i = 0; i < 4; i++){
+      if (uidRead[i] != uidComp[index][i]){
+        flag = false;
+      }
+    }
+    if(flag){
+      return index + 1;
+    }
+    flag = true;
+  }
+  return 0;
+}
+ 
+// пин прерывания
+#define PN532_IRQ   9
+// создаём объект для работы со сканером и передаём ему два параметра
+// первый — номер пина прерывания
+// вторым — число 100
+// от Adafruit был программный сброс шилда 
+// в cканере RFID/NFC 13,56 МГц (Troyka-модуль) этот пин не используется
+// поэтому передаём цифру, большая чем любой пин Arduino
+Adafruit_PN532 nfc(PN532_IRQ, 100);
+ 
+void setup(void)
+{
+  Serial.begin(9600);
+  // инициализация RFID/NFC сканера
+  nfc.begin();
+  int versiondata = nfc.getFirmwareVersion();
+  if (!versiondata) {
+    Serial.print("Didn't find RFID/NFC reader");
+    while(1) {
+    }
+  }
+ 
+  Serial.println("Found RFID/NFC reader");
+  // настраиваем модуль
+  nfc.SAMConfig();
+  Serial.println("Waiting for a card ...");
+}
+ 
+void loop(void)
+{
+  uint8_t success;
+  // буфер для хранения ID карты
+  uint8_t uid[8];
+  // размер буфера карты
+  uint8_t uidLength;
+  // слушаем новые метки
+  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+  // если найдена карта
+  if (success) {
+    if (adminId(uid, adminUids, uidLength) != 0){
+      Serial.println("hello, god");
+    }
+    else if (workerId(uid, workerUids, uidLength) != 0){
+      Serial.println("hello, peasant");
+    }
+    else if (userId(uid, userUids, uidLength) != 0){
+      Serial.println("hello, user");
+    }
+    else{
+      nfc.PrintHex(uid, uidLength);
+    }
+    delay(1000);
+  }
+}
