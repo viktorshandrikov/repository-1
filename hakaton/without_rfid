@@ -1,0 +1,392 @@
+// Библиотека для работы с датчиком цвета
+#include "Adafruit_TCS34725.h"
+#include <Wire.h>
+#include <SparkFun_VL6180X.h>
+//поочередное открывание и закрывание контейнеров и выведение соотвествующих надписей на экран
+// библиотека для работы с OLED-дисплеем
+#include <AmperkaServo.h>
+#include <TroykaOLED.h>
+//определение датчика цвета
+// Создаём объект для работы с сервомоторами
+AmperkaServo servo1;
+AmperkaServo servo2;
+AmperkaServo servo3;
+#define VL6180X_ADDRESS 0x29
+
+// Назначаем пин для управления подсветкой
+constexpr uint8_t PIN_BACKLIGHT = 2;
+char block= 0;
+
+// Создаём объект для работы с датчиком
+// определение датчика цвета и 3 датчиков расстояния
+Adafruit_TCS34725 colorSensor;
+VL6180x Range1(VL6180X_ADDRESS);
+VL6180x Range2(VL6180X_ADDRESS);
+VL6180x Range3(VL6180X_ADDRESS);
+// Задаём имя пина, к которому подключён сервопривод
+constexpr uint8_t SERVO1_PIN = 5;
+constexpr uint8_t SERVO2_PIN = 6;
+constexpr uint8_t SERVO3_PIN = 8;
+// создаём объект для работы с дисплеем
+// и передаём I²C адрес дисплея
+TroykaOLED myOLED(0x3C);
+char door;
+bool flag = 1;
+int trashcolor;
+
+// функция определения цвета или типа мусора
+char Fcolor( ){
+// Включаем подсветку
+  digitalWrite(PIN_BACKLIGHT, HIGH);
+  delay(100);
+  // Переменные для хранения цветов R, G и B
+  digitalWrite(3, HIGH);
+  digitalWrite(4, LOW);
+  float r, g, b;
+  char type;
+
+  // Считываем цвета с датчика цвета
+  colorSensor.getRGB(&r, &g, &b);
+  // Вычисляем какой цвет преобладает в зоне видимости датчика
+  if ((abs(r-g)<40) && (r > b)) {
+    type=2;
+  }
+  //жёлтый=жесть=2
+
+  else if ((g > r) && (g > b)) {
+    type=0;
+  }
+  //зелёный=стекло=0
+
+  else if ((b > g) && (b > r)) {
+    type=1;
+  }
+  //синий=бумага=1
+  digitalWrite(PIN_BACKLIGHT, LOW);
+  delay(100);
+  return type;
+  
+}
+// функция определения расстояния
+int Fdistance(int select){
+
+  // настройка адресов датчиков расстояния
+  int dist;
+  switch (select) {
+    case 1: // стекло
+      digitalWrite(3, 0);
+      digitalWrite(4, 0);
+      dist = Range1.getDistance();
+      if(dist < 20) {
+        block |= 0x1;
+      }
+      else {
+        block &= 0xE;
+      }
+      break;
+    case 2: // бумага
+      digitalWrite(3, 1);
+      digitalWrite(4, 1);
+      dist = Range2.getDistance();
+      if(dist < 20) {
+        block |= 0x2;
+      }
+      else {
+        block &= 0xD;
+      }
+      break;
+    case 3: // жесть
+      digitalWrite(3, 0);
+      digitalWrite(4, 1);
+      dist = Range3.getDistance();
+      if(dist < 20) {
+        block |= 0x4;
+      }
+      else {
+        block &= 0xB;
+      }
+      break;
+  }
+  delay(100);
+  return dist;
+}
+int Ffull(int dist){//функция, считающая заполненность в процентах
+  int full;
+  full=100-(((dist-20)*100)/235);
+  return full;
+}
+//выведение надписи на экран при заполненности контейнера
+void maxtrashlevel1 (bool level)
+{if (level==1)
+// инициализируем дисплей
+  myOLED.begin();
+  // выбираем шрифт 6×8
+  myOLED.setFont(font6x8);
+  // печатаем строку
+  myOLED.print("Exceeding the", 20, 20);
+  // печатаем строку
+  myOLED.print("trash level 1", 25, 40);}
+ 
+void maxtrashlevel2 (bool level)
+{if (level==1)
+// инициализируем дисплей
+  myOLED.begin();
+  // выбираем шрифт 6×8
+  myOLED.setFont(font6x8);
+  // печатаем строку
+  myOLED.print("Exceeding the", 20, 20);
+  // печатаем строку
+  myOLED.print("trash level 2", 25, 40);}
+
+void maxtrashlevel3 (bool level)
+{if (level==1)
+// инициализируем дисплей
+  myOLED.begin();
+  // выбираем шрифт 6×8
+  myOLED.setFont(font6x8);
+  // печатаем строку
+  myOLED.print("Exceeding the", 20, 20);
+  // печатаем строку
+  myOLED.print("trash level 3", 25, 40);}
+
+void screen1 ()
+{ 
+    myOLED.begin();
+    // выбираем шрифт 6×8
+    myOLED.setFont(font6x8);
+    // печатаем строку
+    myOLED.print("Container 1", 20, 20);
+    // печатаем строку
+    myOLED.print("is opened", 25, 40);
+  }
+
+void screen2 ()
+{ 
+    myOLED.begin();
+    // выбираем шрифт 6×8
+    myOLED.setFont(font6x8);
+    // печатаем строку
+    myOLED.print("Container 2", 20, 20);
+    // печатаем строку
+    myOLED.print("is opened", 25, 40);
+  }
+
+void screen3 ()
+{ 
+    myOLED.begin();
+    // выбираем шрифт 6×8
+    myOLED.setFont(font6x8);
+    // печатаем строку
+    myOLED.print("Container 3", 20, 20);
+    // печатаем строку
+    myOLED.print("is opened", 25, 40);
+  }
+
+//функция открывания контейнеров 
+void open2 (char door, char block)
+//door отвечает за номер контейнера, block - за тип мусора
+{
+  //door  0 - 1 дверь открыта
+  //block  0 - 1 дверь открыта 
+  if ((door==0)&((block&0x01)==0))
+
+  {
+  for (int pos = servo1.getMinAngle(); pos <= servo1.getMaxAngle(); pos++)
+   {
+    // Отправляем текущий угол на серво
+    servo1.writeAngle(pos);
+    // Ждём 20 мс
+    delay(20);
+    //выведение надписи на экран
+   }
+ 
+  screen1();
+  delay(2000);
+
+  // Перебираем значения угла сервы от max до min
+  for (int pos = servo1.getMaxAngle(); pos >= servo1.getMinAngle(); pos--)
+   {
+    // Отправляем текущий угол на серво
+    servo1.writeAngle(pos);
+    // Ждём 20 мс
+    delay(20);
+    //выведение надписи на экран
+  
+  }
+  }
+
+
+ if ((door==0)&((block&0x01)==1))
+ //door  0 - 1 дверь открыта
+  //block  1 - 1 дверь закрыта 
+ {
+    maxtrashlevel1 (flag);
+ }
+
+
+ if ((door==1)&((block&0x02)==0))
+ //door  1 - 2 дверь открыта
+  //block  0 - 2 дверь открыта 
+  {
+  for (int pos = servo2.getMinAngle(); pos <= servo2.getMaxAngle(); pos++)
+   {
+    // Отправляем текущий угол на серво
+    servo2.writeAngle(pos);
+    // Ждём 20 мс
+    delay(20);
+  }
+  screen2();
+  delay(2000);
+
+  // Перебираем значения угла сервы от max до min
+  for (int pos = servo2.getMaxAngle(); pos >= servo2.getMinAngle(); pos--)
+   {
+    // Отправляем текущий угол на серво
+    servo2.writeAngle(pos);
+    // Ждём 20 мс
+    delay(20);
+  }
+  }
+
+
+   if ((door==1)&((block&0x02)==2))
+   //door  1 - 2 дверь открыта
+  //block  2 - 2 дверь открыта 
+    {
+      maxtrashlevel2 (flag);
+      }
+
+
+ if ((door==2)&((block&0x04)==0))
+ //door  2 - 3 дверь открыта
+  //block  0 - 3 дверь открыта 
+  {
+  for (int pos = servo3.getMinAngle(); pos <= servo3.getMaxAngle(); pos++)
+   {
+    // Отправляем текущий угол на серво
+    servo3.writeAngle(pos);
+    // Ждём 20 мс
+    delay(20);
+  }
+  screen3();
+  delay(2000);
+
+  // Перебираем значения угла сервы от max до min
+  for (int pos = servo3.getMaxAngle(); pos >= servo3.getMinAngle(); pos--)
+   {
+    // Отправляем текущий угол на серво
+    servo3.writeAngle(pos);
+    // Ждём 20 мс
+    delay(20);
+  }
+  }
+
+
+ if ((door==2)&((block&0x04)==4))
+  //door  2 - 3 дверь открыта
+  //block  4 - 3 дверь закрыта 
+ {
+maxtrashlevel3 (flag);
+}
+}
+void servoinit ()//инициализация сервов
+{
+  servo1.attach(SERVO1_PIN, 544, 2400, 0, 180);
+  servo2.attach(SERVO2_PIN, 544, 2400, 0, 180);
+  servo3.attach(SERVO3_PIN, 544, 2400, 0, 180);
+}
+void setup() {
+  servoinit ();
+  // put your setup code here, to run once:
+// инициализируем дисплей
+  /*myOLED.begin();
+  // выбираем шрифт 6×8
+  myOLED.setFont(font6x8);
+  // печатаем строку
+  myOLED.print("Exceeding the", 20, 20);
+  // печатаем строку
+  myOLED.print("trash level", 25, 40);*/
+  //maxtrashlevel (flag);
+  // Открываем Serial-порт
+  Serial.begin(9600);
+
+  // Настройка пинов	
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(2, OUTPUT);
+  digitalWrite(3, 0);
+  digitalWrite(4, 0);
+  VL6180x Range1(VL6180X_ADDRESS);
+  digitalWrite(3, 1);
+  digitalWrite(4, 1);
+  VL6180x Range2(VL6180X_ADDRESS);
+  digitalWrite(3, 0);
+  digitalWrite(4, 1);
+  VL6180x Range3(VL6180X_ADDRESS);
+  // инициализация I2C
+  Wire.begin();
+
+  
+
+  // небольшая задержка
+  delay(100);
+
+  digitalWrite(3, 0);
+  digitalWrite(4, 0);
+  // проверяем инициализацию модуля
+  while (Range1.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  Range1.VL6180xDefautSettings();
+  delay(1000);
+
+  digitalWrite(3, 1);
+  // Инициализация сенсора цвета
+  while (!colorSensor.begin()) {
+    Serial.println("Failed to initalize color");
+    delay(1000);
+  }
+  delay(1000);
+  //инициализация датчика расстояния
+  digitalWrite(3,0);
+  digitalWrite(4,1);
+  while (Range3.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  Range3.VL6180xDefautSettings();
+  delay(1000);
+
+  digitalWrite(3,1);
+  while (Range2.VL6180xInit()) {
+    Serial.println("Failed to initalize");
+    delay(1000);
+  }
+  Range2.VL6180xDefautSettings();  
+  delay(1000);
+
+}
+
+
+void loop() {
+  trashcolor=(int)Fcolor();
+  // вывод типа мусора и заполненности баков  
+  delay(500);
+  Serial.print("Distance = ");
+  Serial.print(Fdistance(1));
+  Serial.println(" mm");
+  delay(500);  
+  Serial.print("Distance = ");
+  Serial.print(Fdistance(2));
+  Serial.println(" mm");
+  delay(500);
+  Serial.print("Distance = ");
+  Serial.print(Fdistance(3));
+  Serial.println(" mm");
+  delay(500);
+  Serial.println((int)block);
+  //проверка условий открывания и закрывания каждого контейнера
+  open2(trashcolor,block);
+  delay(1000);
+}
