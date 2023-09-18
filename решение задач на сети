@@ -1,0 +1,25 @@
+(10580)
+from ipaddress import *
+net=ip_network('10.48.96.0/255.255.240.0')
+k=0 
+for ip in net:
+    b=f'{ip:b}'
+    if b.count('1')>b.count('0'):
+        k+=1 
+print(k)
+(10579)
+from ipaddress import *
+net=ip_network('192.168.240.0/255.255.255.0')
+k=0 
+for ip in net:
+    b=f'{ip:b}'
+    if b.count('1')==b.count('0'):
+        k+=1
+print(k) 
+(10578)
+from ipaddress import * 
+for mask in range(33):
+    net1=ip_network(f'10.96.180.231/{mask}', 0)
+    net2=ip_network(f'10.96.140.118/{mask}', 0)
+    if net1!=net2:
+        print(32-mask)
