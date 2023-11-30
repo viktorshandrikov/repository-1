@@ -1,0 +1,20 @@
+a=int(input())
+b=int(input())
+def f1(a,b):
+    if a<0:
+        return(a)
+    if b<0:
+        return(b) 
+    def f2(a,b):
+ -----------------------       
+a=int(input())
+l=bin(a)
+#ok=int(max(len(bin(a)),len(bin(b)))*'1')-int('10'+l[2:])+5+4*(-1)**a
+ok=int(l[2:])
+b=str(ok)
+print(b[4:])
+
+-0-----------------
+a=int(input())
+l=bin(a)
+print(l.zfill(7),l.zfill(4))
