@@ -18,3 +18,17 @@ print(b[4:])
 a=int(input())
 l=bin(a)
 print(l.zfill(7),l.zfill(4))
+
+=========
+NEW VERSION
+a=int(input())
+def obr(a):
+    l=bin(abs(a))
+    def sign(x):
+        if x>=0:
+            return 0
+        if x<0:
+            return 1
+    c=str(int((sign(a)+len(l[2:]))*'1')-int(l[2:]))
+    return [len(c),'0'*(4-len(c))+c]
+print(obr(6))
