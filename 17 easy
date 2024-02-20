@@ -1,0 +1,17 @@
+a=open('17.txt').readlines()
+b=[]
+for i in range(len(a)):
+    if (len(a[i])==4):
+        b.append(int(a[i]))
+#print(b[:(-1)])
+c=max(b[:(-1)])
+n=0
+maxx=0
+a=a[:(-1)]
+for i in range(len(a)-1):
+    if ((len(a[i])==4 and len(a[i+1])!=4) or (len(a[i])!=4 and len(a[i+1])==4)) and (int(a[i])+int(a[i+1])>=c):
+        print(a[i],a[i+1])
+        if int(a[i])+int(a[i+1])>maxx:
+            maxx=int(a[i])+int(a[i+1])
+        n+=1
+print(n,maxx)
