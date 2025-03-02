@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+float F(float x){
+    float result=x*x;
+    return result;
+}
+float dF(float x){
+    float result=2*x;
+    return result;
+}
+int main()
+{
+    int i=0;
+    float x, delt;
+    printf("a=");
+    scanf("%f",&x);
+    print("delt=");
+    scanf("%f",%delt);
+    do {
+        x=x-F(x)/dF(x);
+        i=i+1;
+    } while(abs(F(a))>=delt);
+    printf("%f\n",a);
+    printf("%d\n", i);
+}
