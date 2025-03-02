@@ -14,12 +14,12 @@ int main()
     float x, delt;
     printf("a=");
     scanf("%f",&x);
-    print("delt=");
-    scanf("%f",%delt);
+    printf("delt=");
+    scanf("%f",&delt);
     do {
         x=x-F(x)/dF(x);
         i=i+1;
-    } while(abs(F(a))>=delt);
-    printf("%f\n",a);
+    } while(fabs(F(x))>=delt);
+    printf("%f\n",x);
     printf("%d\n", i);
 }
