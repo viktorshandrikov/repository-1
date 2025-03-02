@@ -23,3 +23,35 @@ int main()
     printf("%f\n",x);
     printf("%d\n", i);
 }
+_________________________________________
+#include <stdio.h>
+#include <math.h>
+float F(float x){
+    float result=x*x;
+    return result;
+}
+float Perv(float x){
+    float result=2*x;
+    return result;
+}
+int main()
+{
+    int shir;
+    float a,b,n,d, s=0, xa, xb;
+    printf("number of steps=");
+    scanf("%d",&shir);
+    printf("a=");
+    scanf("%f",&a);
+    printf("b=");
+    scanf("%f",&b);
+    n=(b-a)/(float)shir;
+    for (int i=0; i<shir;){
+        xb=a+n*(i+1);
+        xa=a+n*i;
+        s=s+n*(F(xa)+F(xb))/2;
+        i=i+1;
+    }
+    d=(float)fabs((Perv(b)-Perv(a)-s)/(Perv(b)-Perv(a)));
+    printf("s=%f\n", s);
+    printf("d=%f\n",d);
+}
