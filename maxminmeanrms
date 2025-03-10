@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define Size 20
+
+
+int mas[Size];
+int real_size;
+
+
+int intsize() {
+	int n;
+	printf("Enter size\n");
+	scanf("%d", &n);
+	if (n > 0 && n <= Size) {
+		return n;
+	}
+}
+
+void initmas(int n) 
+{
+    printf("Enter elements of list\n");
+	for (int i = 0; i < n; i++)
+	{
+		scanf("%d", &mas[i]);
+	}
+}
+int MAX(int n) 
+    {
+	int max = mas[0];
+	for (int i = 0; i < n; i++) 
+	{
+		if (mas[i] > max) 
+		{
+			max = mas[i];
+		}
+	}
+	return max;
+}
+
+int MIN(int n) 
+{
+	int min = mas[0];
+	for (int i = 0; i < n; i++) 
+	{
+		if (mas[i] < min) 
+		{
+			min = mas[i];
+		}
+	}
+	return min;
+}
+
+float MEAN(int n) 
+{
+	float m = 0;
+	for (int i = 0; i < n; i++) 
+	{
+		m = m + mas[i];
+	}
+	m = m / n;
+	return m;
+}
+
+float RMS(int n) 
+{
+	float rms = 0;
+	for (int i = 0; i < n; i++) 
+	{
+		rms = rms + pow(mas[i] - MEAN(real_size),2);
+	}
+	rms = (float)sqrt(rms / (n-1));
+	return rms;
+}
+int main()
+{
+	int max, min, real_size;
+	float mean, rms;
+
+	real_size = intsize();
+
+	initmas(real_size);
+
+	mean = MEAN(real_size);
+	max = MAX(real_size);
+	min = MIN(real_size);
+	rms = RMS(real_size);
+	printf("max = %d\n", max);
+	printf("min = %d\n", min);
+	printf("mean = %f\n", mean);
+	printf("rms = %f\n", rms);
+
+}
