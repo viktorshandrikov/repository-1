@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+typedef struct {
+	float data[3][3];
+} MyMatrix_3x3;
+
+
+MyMatrix_3x3 matrix_consol() {
+	MyMatrix_3x3 x;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			scanf("%f", &(x.data[i][j]));
+		}
+	}
+	return x;
+}
+
+MyMatrix_3x3 matrix_file() {
+	MyMatrix_3x3 x;
+	FILE* f = fopen("file1.txt", "r");
+	if (f == NULL) {
+		printf("\nerror");
+		fclose(f);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				x.data[i][j] = 0;
+			}
+		}
+	}
+	else {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				fscanf(f, "%f", &(x.data[i][j]));
+			}
+		}
+		fclose(f);
+	}
+	return x;
+}
+
+MyMatrix_3x3 Sum(MyMatrix_3x3 x, MyMatrix_3x3 y) {
+	MyMatrix_3x3 s;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			s.data[i][j] = x.data[i][j] + y.data[i][j];
+		}
+	}
+	return s;
+}
+
+MyMatrix_3x3 Compos(MyMatrix_3x3 x, MyMatrix_3x3 y) {
+	MyMatrix_3x3 s;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			s.data[i][j] = (x.data[i][0]) * (y.data[0][j]) + (x.data[i][1]) * (y.data[1][j]) + (x.data[i][2]) * (y.data[2][j]);
+		}
+	}
+	return s;
+}
+
+int Det(MyMatrix_3x3 x) {
+	int d;
+	d = (x.data[2][2]) * (x.data[0][0]) * (x.data[1][1]) + (x.data[0][2])* (x.data[2][1])* (x.data[1][0]) + (x.data[1][2]) * (x.data[0][1]) * (x.data[2][0]) - (x.data[0][2]) * (x.data[2][0]) * (x.data[1][1]) - (x.data[2][2]) * (x.data[0][1]) * (x.data[1][0]) - (x.data[1][2]) * (x.data[2][1]) * (x.data[0][0]);
+	return d;
+}
+
+MyMatrix_3x3 Reverse(MyMatrix_3x3 x, int d) {
+	MyMatrix_3x3 r;
+	MyMatrix_3x3 c;
+	if (d == 0) {
+		for (int p = 0; p < 3; p++) {
+			for (int k = 0; k < 3; k++) {
+				r.data[p][k] = 0;
+			}
+		}
+	}
+	else {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				for (int p = 0; p < 3; p++) {
+					for (int k = 0; k < 3; k++) {
+						c.data[p][k] = x.data[p][k];
+					}
+				}
+				for (int t = 0; t < 3; t++) {
+					c.data[i][t] = 0;
+					c.data[t][j] = 0;
+				}
+				c.data[i][j] = 1;
+				r.data[i][j] = ((float)Det(c)) / d;
+			}
+		}
+	}
+	return r;
+}
+
+MyMatrix_3x3 PrintMd(MyMatrix_3x3 x) {
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			printf("%d ", (int)x.data[i][j]);
+		}
+		printf("\n");
+	}
+}
+MyMatrix_3x3 PrintMf(MyMatrix_3x3 x) {
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			printf("%f ", x.data[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+MyMatrix_3x3 matrix_fprint(MyMatrix_3x3 x, MyMatrix_3x3 y, int d, MyMatrix_3x3 r) {
+	FILE* f = fopen("file2.txt", "w");
+	fprintf(f, "sum={");
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			fprintf(f, "%d ", (int)x.data[i][j]);
+		}
+	}
+	fprintf(f, "} com={");
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			fprintf(f, "%d ", (int)y.data[i][j]);
+		}
+	}
+	fprintf(f, "} det=%d ", d);
+	fprintf(f, " rev= {");
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			fprintf(f, "%f ", r.data[i][j]);
+		}
+	}
+	fclose(f);
+}
+
+void main()
+{
+	MyMatrix_3x3 a, b;
+	a = matrix_consol();
+	b = matrix_file();
+	printf("\n");
+	PrintMd(Sum(a, b));
+	printf("\n");
+	PrintMd(Compos(a, b));
+	printf("\n");
+	printf("%d", Det(a));
+	printf("\n");
+	PrintMf(Reverse(a, Det(a)));
+	matrix_fprint(Sum(a, b), Compos(a, b), Det(a), Reverse(a, Det(a)));
+}
