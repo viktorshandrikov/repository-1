@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define Size 20
+
+int intsize() {
+    int n;
+    scanf_s("%d", &n);
+    if (n > 0 && n <= Size) {
+        return n;
+    }
+    else {
+        printf("error\n");
+        return 0;
+    }
+}
+void InitMas(int* a, int n) {
+    for (int i = 0; i < n; i++) {
+        scanf_s("%d", (a + i));
+        //*(a + i) = rand() % 100 + 10;
+        //printf("\n%d", *(a + i));
+    }
+}
+
+int Compare(int a, int b) {
+    if (a >= b) {
+        return 1;
+    }
+    else {
+        return 2;
+    }
+}
+
+void Replace(int* a, int j) {
+    int x;
+    x = *(a + j);
+    *(a + j) = *(a + j+1);
+    *(a + j+1) = x;
+}
+
+void Sort_up(int* a, int n, int* F(int, int)) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i; j++) {
+            if (F(*(a + j), *(a + j + 1)) == 1) {
+                Replace(a, j);
+            }
+        }
+    }
+}
+
+void Sort_down(int* a, int n, int* F(int, int)) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i; j++) {
+            if (F(*(a + j), *(a + j + 1)) == 2) {
+                Replace(a, j);
+            }
+        }
+    }
+}
+
+void Sort_abs_up(int* a, int n, int* F(int, int)) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i; j++) {
+            if (F((int)fabs((*(a + j))), (int)fabs(*(a + j + 1))) == 1) {
+                Replace(a, j);
+            }
+        }
+    }
+}
+
+void Sort_abs_down(int* a, int n, int* F(int, int)) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i; j++) {
+            if (F((int)fabs((*(a + j))), (int)fabs(*(a + j + 1))) == 2) {
+                Replace(a, j);
+            }
+        }
+    }
+}
+
+void Print_mas(int* a, int n) {
+    for (int i = 0; i < n; i++) {
+        printf("\n%d", *(a + i));
+    }
+}
+
+
+void Direct(int* a, int n, int direction) {
+    switch (direction) {
+    case 1:
+        Sort_up(a, n, Compare);
+    case 2:
+        Sort_down(a, n, Compare);
+    case 3:
+        Sort_abs_up(a, n, Compare);
+    case 4:
+        Sort_abs_down(a, n, Compare);
+    }
+}
+
+int main() {
+    int* a = NULL;
+    int real_size, direction;
+    real_size = intsize();
+    a = malloc(sizeof(int) * real_size);
+    InitMas(a, real_size);
+    printf("\ndirection: ");
+    scanf_s("%d", &direction);
+    Direct(a, real_size, direction);
+    Print_mas(a, real_size);
+    free(a);
+}
