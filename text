@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <malloc.h>
+#include <locale.h>
+
+
+char* Resize(char* a, int len) {
+    char* b = NULL;
+    b = malloc(sizeof(char) * len);
+    for (int i = 0; i < (len - 1); i++) {
+        *(b + i) = *(a + i);
+    }
+    free(a);
+    return b;
+}
+
+char* Text_from_file() {
+    char* a;
+    FILE* file = fopen("text.txt", "r");
+    a = malloc(sizeof(char)*2);
+    int len = 1;
+    char temp;
+    int i = 0;
+    do {
+        temp = getc(file);
+        *(a + i) = temp;
+        i++;
+        if (i >= len) {
+            len = len + 1;
+            a = Resize(a, len);
+        }
+    } while (temp != '#');
+    fclose(file);
+    return a;
+}
+
+char* Text_from_consol() {
+    char* a = NULL;
+    a = malloc(sizeof(char) * 2);
+    char temp;
+    int len = 1;
+    int i = 0;
+    temp = getc(stdin);
+    *a = temp;
+    do {
+        temp = getc(stdin);
+        *(a + i) = temp;
+        i++;
+        if (i >= len) {
+            len = len + 1;
+            a = Resize(a, len);
+        }
+    } while (temp != '#');
+    return a;
+}
+
+
+void* Correct(char* text, char* newtext) {
+    int i, j;
+    int gap = 1;
+    int sentst = 1;
+    for (i = 0, j = 0; *(text + i) != '#'; i++) {
+        if (*(text + i) == ' ') {
+            if (gap == 0) {
+                *(newtext + j) = *(text + i);
+                j++;
+                gap = 1;
+            }
+            continue;
+        }
+        if ((*(text + i) == '.' || *(text + i) == ',' || *(text + i) == '!' || *(text + i) == '?') && j > 0 && gap == 1) {
+            j = j - 1;
+        }
+        if (sentst == 1 && (*(text + i) >= 97 && *(text + i) <= 122)) {
+            *(newtext + j) = *(text + i) - 32;
+            j++;
+            sentst = 0;
+        }
+        else {
+            if (sentst == 0 && (*(text + i) >= 65 && *(text + i) <= 90)) {
+                *(newtext + j) = *(text + i) + 32;
+                j++;
+            }
+            else {
+                *(newtext + j) = *(text + i);
+                j++;
+                sentst = 0;
+            }
+        }
+        gap = 0;
+        if (*(text + i) == '.' || *(text + i) == '!' || *(text + i) == '?') {
+            sentst = 1;
+            *(newtext + j) = ' ';
+            j++;
+            gap = 1;
+        }
+        if (*(text + i) == ',') {
+            *(newtext + j) = ' ';
+            j++;
+            gap = 1;
+        }
+    }
+    *(newtext + j) = '#';
+}
+
+void Print(char* a) {
+    int i = 0;
+    while (*(a + i) != '#') {
+        printf("%c", *(a + i));
+        i++;
+    }
+}
+
+void main() {
+    int way;
+    char* text = NULL;
+    char* newtext = NULL;
+    printf("enter text from file(1) or from cons(2)\n");
+    scanf_s("%d", &way);
+    switch (way) {
+    case 1:
+        text = Text_from_file();
+        break;
+    case 2:
+        text = Text_from_consol();
+        break;
+    }
+    int size = sizeof(text);
+    newtext = malloc(sizeof(char) * size * 2);
+    Correct(text, newtext);
+    printf("\nfinal text :\n");
+    Print(newtext);
+    free(text);
+    free(newtext);
+}
